@@ -1,26 +1,35 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:my_app/home.dart';
 import 'package:my_app/screens/calendarscreens/calendar.dart';
-import 'package:my_app/screens/calorieoperations/calorie.dart';
+import 'package:my_app/screens/calorieoperations/nutrititionix.dart';
+import 'package:my_app/screens/mainscreen.dart';
 import 'package:my_app/screens/profilescreen.dart';
 
-class MainMenu extends StatefulWidget {
-  const MainMenu({super.key});
+class Calorie extends StatefulWidget {
+  const Calorie({super.key});
 
   @override
-  State<MainMenu> createState() => _MainMenuState();
+  State<Calorie> createState() => _CalorieState();
 }
 
-class _MainMenuState extends State<MainMenu> {
+class _CalorieState extends State<Calorie> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  int _selectedIndex = 0;
+  int _selectedIndex = 2;
+  final TextEditingController _textController = TextEditingController();
+  String _calories = '';
+  final NutritionixService _nutritionixService = NutritionixService();
 
-  // Navigasyon elemanları
+  Future<void> _fetchCalories(String foodItem) async {
+    final calories = await _nutritionixService.getCalories(foodItem);
+    setState(() {
+      _calories = calories != null ? calories.toString() : 'Error';
+    });
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -32,23 +41,22 @@ class _MainMenuState extends State<MainMenu> {
             context, MaterialPageRoute(builder: (context) => const MainMenu()));
         break;
       case 1:
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const Calendar(),
-            ));
-        break;
-      case 2:
         Navigator.pushReplacement(context, MaterialPageRoute(
           builder: (context) {
-            return const Calorie();
+            return const Calendar();
           },
         ));
         break;
-      case 3:
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => const ProfileScreen()));
+      case 2:
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => const Calorie()));
         break;
+      case 3:
+        Navigator.pushReplacement(context, MaterialPageRoute(
+          builder: (context) {
+            return const ProfileScreen();
+          },
+        ));
     }
   }
 
@@ -66,7 +74,7 @@ class _MainMenuState extends State<MainMenu> {
                   begin: Alignment.topRight,
                   end: Alignment.bottomLeft,
                   colors: [
-                    Color.fromARGB(255, 18, 216, 200), // Tam siyah
+                    Color.fromARGB(255, 18, 216, 200),
                     Color.fromARGB(255, 237, 228, 227),
                     Color.fromARGB(255, 255, 128, 0),
                   ],
@@ -83,11 +91,24 @@ class _MainMenuState extends State<MainMenu> {
                 style: TextStyle(color: Colors.black),
               ),
               onTap: () {
-                Navigator.push(
+                Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const ProfileScreen(),
-                    ));
+                        builder: (context) => const ProfileScreen()));
+              },
+            ),
+            ListTile(
+              leading: Image.asset('lib/assets/kcal.png'),
+              title: const Text(
+                'Calories',
+                style: TextStyle(color: Colors.black),
+              ),
+              onTap: () async {
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                  builder: (context) {
+                    return const Calorie();
+                  },
+                ));
               },
             ),
             ListTile(
@@ -97,11 +118,8 @@ class _MainMenuState extends State<MainMenu> {
                 style: TextStyle(color: Colors.black),
               ),
               onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const Calendar(),
-                    ));
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => const Calendar()));
               },
             ),
             ListTile(
@@ -167,22 +185,84 @@ class _MainMenuState extends State<MainMenu> {
           ),
         ),
       ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Card(
+            shadowColor: Colors.blueAccent,
+            elevation: 9,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                width: 500,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    const SizedBox(height: 20),
+                    const Center(
+                        child: Text(
+                      'Calorie Calculator',
+                      style: TextStyle(
+                          color: Colors.blueAccent,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800),
+                    )),
+                    const SizedBox(height: 20),
+                    TextField(
+                      controller: _textController,
+                      decoration: const InputDecoration(
+                          focusedBorder: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20.0)),
+                              borderSide: BorderSide(color: Colors.orange)),
+                          labelText: 'Enter Meal',
+                          border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20.0)))),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor: Colors.blueAccent,
+                          minimumSize: const Size(200, 50),
+                        ),
+                        onPressed: () {
+                          _fetchCalories(_textController.text);
+                        },
+                        child: const Text('Get Calories')),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Text('Calories: $_calories'),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
+            icon: Icon(Icons.home, color: Colors.black),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_month_outlined),
+            icon: Icon(Icons.calendar_month_outlined, color: Colors.black),
             label: 'Calendar',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.health_and_safety_outlined),
-            label: 'Calorie',
+            icon: Icon(
+              Icons.health_and_safety_outlined,
+              color: Colors.black,
+            ),
+            label: 'Calories',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+            icon: Icon(Icons.person, color: Colors.black),
             label: 'Profile',
           ),
         ],

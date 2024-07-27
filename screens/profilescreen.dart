@@ -9,7 +9,7 @@ import 'dart:io';
 import 'package:intl/intl.dart';
 import 'package:my_app/home.dart';
 import 'package:my_app/screens/calendarscreens/calendar.dart';
-import 'package:my_app/screens/calorie.dart';
+import 'package:my_app/screens/calorieoperations/calorie.dart';
 import 'package:my_app/screens/mainscreen.dart';
 import 'package:my_app/widgets/resertpasswordprofile.dart';
 

@@ -1,5 +1,7 @@
+// ignore_for_file: avoid_print, use_build_context_synchronously
+
 import 'package:flutter/material.dart';
-import 'package:my_app/screens/calorie.dart';
+import 'package:my_app/screens/calorieoperations/calorie.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -44,7 +46,7 @@ class _CalendarState extends State<Calendar> {
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => Calendar(),
+              builder: (context) => const Calendar(),
             ));
         break;
       case 2:
@@ -111,7 +113,6 @@ class _CalendarState extends State<Calendar> {
       print('Error fetching appointments: $e');
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
