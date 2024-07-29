@@ -50,6 +50,7 @@ class _DayDetailsScreenState extends State<DayDetailsScreen> {
           'description': description,
           'date': Timestamp.fromDate(date),
           'priority': priority,
+          'isChecked': false,
         })
         .then((value) => print("Reminder Added"))
         .catchError((error) => print("Failed to add reminder: $error"));
@@ -67,8 +68,8 @@ class _DayDetailsScreenState extends State<DayDetailsScreen> {
         .catchError((error) => print("Failed to delete reminder: $error"));
   }
 
-  Future<void> updateReminder(
-      String reminderId, String title, String description, int priority) async {
+  Future<void> updateReminder(String reminderId, String title,
+      String description, int priority, bool isChecked) async {
     CollectionReference reminders = FirebaseFirestore.instance
         .collection('users')
         .doc(_currentUser.uid)
@@ -79,6 +80,7 @@ class _DayDetailsScreenState extends State<DayDetailsScreen> {
           'title': title,
           'description': description,
           'priority': priority,
+          'isChecked': isChecked,
         })
         .then((value) => print("Reminder Updated"))
         .catchError((error) => print("Failed to update reminder: $error"));
@@ -88,6 +90,7 @@ class _DayDetailsScreenState extends State<DayDetailsScreen> {
     String title = reminder.title;
     String description = reminder.description;
     int priority = reminder.priority;
+    bool isChecked = reminder.isChecked; // Güncel isChecked değeri
 
     showDialog(
       context: context,
@@ -136,6 +139,20 @@ class _DayDetailsScreenState extends State<DayDetailsScreen> {
                   });
                 },
               ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('Completed'),
+                  Switch(
+                    value: isChecked,
+                    onChanged: (value) {
+                      setState(() {
+                        isChecked = value;
+                      });
+                    },
+                  ),
+                ],
+              ),
             ],
           ),
           actions: [
@@ -148,7 +165,8 @@ class _DayDetailsScreenState extends State<DayDetailsScreen> {
             TextButton(
               onPressed: () {
                 if (title.isNotEmpty && description.isNotEmpty) {
-                  updateReminder(reminder.id, title, description, priority);
+                  updateReminder(
+                      reminder.id, title, description, priority, isChecked);
                   Navigator.of(context).pop();
                 }
               },
@@ -224,14 +242,41 @@ class _DayDetailsScreenState extends State<DayDetailsScreen> {
 
                 return ListTile(
                   leading: CircleAvatar(
-                    backgroundColor: priorityColor,
+                    backgroundColor:
+                        reminder.isChecked ? Colors.grey : priorityColor,
                     radius: 10,
                   ),
-                  title: Text(reminder.title),
-                  subtitle: Text(reminder.description),
+                  title: Text(reminder.title,
+                      style: TextStyle(
+                          decoration: reminder.isChecked
+                              ? TextDecoration.lineThrough
+                              : TextDecoration.none)),
+                  subtitle: Text(
+                    reminder.description,
+                    style: TextStyle(
+                        decoration: reminder.isChecked
+                            ? TextDecoration.lineThrough
+                            : TextDecoration.none),
+                  ),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      IconButton(
+                          onPressed: () {
+                            setState(() {
+                              updateReminder(
+                                  reminder.id,
+                                  reminder.title,
+                                  reminder.description,
+                                  reminder.priority,
+                                  !reminder.isChecked);
+                            });
+                          },
+                          icon: Icon(
+                            Icons.check_circle,
+                            color:
+                                reminder.isChecked ? Colors.green : Colors.grey,
+                          )),
                       IconButton(
                         icon: const Icon(Icons.edit, color: Colors.blue),
                         onPressed: () {

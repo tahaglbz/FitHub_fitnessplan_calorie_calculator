@@ -8,6 +8,7 @@ class Reminder {
   final String description;
   final DateTime date;
   final int priority;
+  final bool isChecked;
 
   Reminder({
     required this.id,
@@ -15,6 +16,7 @@ class Reminder {
     required this.description,
     required this.date,
     required this.priority,
+    required this.isChecked,
   });
 
   factory Reminder.fromFirestore(DocumentSnapshot doc) {
@@ -25,6 +27,7 @@ class Reminder {
       description: data['description'] ?? '',
       date: (data['date'] as Timestamp).toDate(),
       priority: data['priority'] ?? 0,
+      isChecked: data['isChecked'] ?? false,
     );
   }
 }

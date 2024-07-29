@@ -18,7 +18,41 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
+      title: 'Fithub',
+      theme: ThemeData(
+        primarySwatch: Colors.orange,
+        appBarTheme: AppBarTheme(
+          color: Colors.orange[800],
+          elevation: 4,
+          iconTheme: IconThemeData(color: Colors.white),
+          titleTextStyle: TextStyle(color: Colors.white, fontSize: 20),
+        ),
+        bottomNavigationBarTheme: BottomNavigationBarThemeData(
+          backgroundColor: Colors.orange[100],
+          selectedItemColor: Colors.orange[800],
+          unselectedItemColor: Colors.grey,
+        ),
+        floatingActionButtonTheme: FloatingActionButtonThemeData(
+          backgroundColor: Colors.orange[700],
+          foregroundColor: Colors.white,
+        ),
+        buttonTheme: ButtonThemeData(
+          buttonColor: Colors.orange,
+          textTheme: ButtonTextTheme.primary,
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          border: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.orange[300]!),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.orange[500]!),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.orange[200]!),
+          ),
+        ),
+      ),
       home: HomePage(),
       debugShowCheckedModeBanner: false,
     );

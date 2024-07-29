@@ -55,141 +55,161 @@ class _MainMenuState extends State<MainMenu> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: scaffoldKey,
-      endDrawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            const DrawerHeader(
-              decoration: BoxDecoration(
+        key: scaffoldKey,
+        endDrawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              const DrawerHeader(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topRight,
+                    end: Alignment.bottomLeft,
+                    colors: [
+                      Color.fromARGB(255, 18, 216, 200), // Tam siyah
+                      Color.fromARGB(255, 237, 228, 227),
+                      Color.fromARGB(255, 255, 128, 0),
+                    ],
+                  ),
+                ),
+                child: Image(
+                  image: AssetImage('lib/assets/logo2.png'),
+                ),
+              ),
+              ListTile(
+                leading: Image.asset('lib/assets/user.png'),
+                title: const Text(
+                  'Profile',
+                  style: TextStyle(color: Colors.black),
+                ),
+                onTap: () {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ProfileScreen()));
+                },
+              ),
+              ListTile(
+                leading: Image.asset('lib/assets/kcal.png'),
+                title: const Text(
+                  'Calories',
+                  style: TextStyle(color: Colors.black),
+                ),
+                onTap: () async {
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (context) {
+                      return const Calorie();
+                    },
+                  ));
+                },
+              ),
+              ListTile(
+                leading: Image.asset('lib/assets/calendar.png'),
+                title: const Text(
+                  'Calendar',
+                  style: TextStyle(color: Colors.black),
+                ),
+                onTap: () {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const Calendar()));
+                },
+              ),
+              ListTile(
+                leading: Image.asset('lib/assets/settings.png'),
+                title: const Text(
+                  'Settings',
+                  style: TextStyle(color: Colors.black),
+                ),
+                onTap: () {
+                  // Do something here
+                },
+              ),
+              ListTile(
+                leading: Image.asset('lib/assets/logout.png'),
+                title: const Text(
+                  'Log out',
+                  style: TextStyle(color: Colors.black),
+                ),
+                onTap: () async {
+                  await _auth.signOut();
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (context) {
+                      return const HomePage();
+                    },
+                  ));
+                },
+              ),
+            ],
+          ),
+        ),
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(100),
+          child: AppBar(
+            actions: [
+              IconButton(
+                icon: Image.asset('lib/assets/menu-bar.png'),
+                onPressed: () {
+                  scaffoldKey.currentState?.openEndDrawer();
+                },
+              )
+            ],
+            automaticallyImplyLeading: false,
+            title: Text(
+              'FitHub',
+              style: GoogleFonts.agbalumo(
+                textStyle: const TextStyle(color: Colors.white, fontSize: 50),
+              ),
+            ),
+            backgroundColor: const Color.fromARGB(255, 73, 144, 201),
+            centerTitle: true,
+            flexibleSpace: Container(
+              decoration: const BoxDecoration(
                 gradient: LinearGradient(
-                  begin: Alignment.topRight,
-                  end: Alignment.bottomLeft,
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                   colors: [
-                    Color.fromARGB(255, 18, 216, 200), // Tam siyah
-                    Color.fromARGB(255, 237, 228, 227),
-                    Color.fromARGB(255, 255, 128, 0),
+                    Color.fromARGB(31, 1, 106, 242),
+                    Color.fromARGB(255, 17, 157, 22),
+                    Color.fromARGB(255, 255, 158, 31),
                   ],
                 ),
               ),
-              child: Image(
-                image: AssetImage('lib/assets/logo2.png'),
-              ),
-            ),
-            ListTile(
-              leading: Image.asset('lib/assets/user.png'),
-              title: const Text(
-                'Profile',
-                style: TextStyle(color: Colors.black),
-              ),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const ProfileScreen(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Image.asset('lib/assets/calendar.png'),
-              title: const Text(
-                'Calendar',
-                style: TextStyle(color: Colors.black),
-              ),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const Calendar(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Image.asset('lib/assets/settings.png'),
-              title: const Text(
-                'Settings',
-                style: TextStyle(color: Colors.black),
-              ),
-              onTap: () {
-                // Do something here
-              },
-            ),
-            ListTile(
-              leading: Image.asset('lib/assets/logout.png'),
-              title: const Text(
-                'Log out',
-                style: TextStyle(color: Colors.black),
-              ),
-              onTap: () async {
-                await _auth.signOut();
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
-                  builder: (context) {
-                    return const HomePage();
-                  },
-                ));
-              },
-            ),
-          ],
-        ),
-      ),
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(100),
-        child: AppBar(
-          actions: [
-            IconButton(
-              icon: Image.asset('lib/assets/menu-bar.png'),
-              onPressed: () {
-                scaffoldKey.currentState?.openEndDrawer();
-              },
-            )
-          ],
-          automaticallyImplyLeading: false,
-          title: Text(
-            'FitHub',
-            style: GoogleFonts.agbalumo(
-              textStyle: const TextStyle(color: Colors.white, fontSize: 50),
-            ),
-          ),
-          backgroundColor: const Color.fromARGB(255, 73, 144, 201),
-          centerTitle: true,
-          flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Color.fromARGB(31, 1, 106, 242),
-                  Color.fromARGB(255, 17, 157, 22),
-                  Color.fromARGB(255, 255, 158, 31),
-                ],
-              ),
             ),
           ),
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+        bottomNavigationBar: Theme(
+          data: ThemeData(
+            bottomNavigationBarTheme: BottomNavigationBarThemeData(
+              selectedItemColor: Colors.amber[800], // Seçili öğenin rengi
+              unselectedItemColor:
+                  Colors.black, // Seçili olmayan öğelerin rengi
+              backgroundColor: Colors.white, // Arka plan rengi (isteğe bağlı)
+            ),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_month_outlined),
-            label: 'Calendar',
+          child: BottomNavigationBar(
+            items: const <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home),
+                label: 'Home',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.calendar_month_outlined),
+                label: 'Calendar',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.health_and_safety_outlined),
+                label: 'Calories',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.person),
+                label: 'Profile',
+              ),
+            ],
+            currentIndex: _selectedIndex,
+            onTap: _onItemTapped,
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.health_and_safety_outlined),
-            label: 'Calorie',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
-        onTap: _onItemTapped,
-      ),
-    );
+        ));
   }
 }
