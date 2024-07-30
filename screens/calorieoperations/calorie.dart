@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -21,7 +19,8 @@ class _CalorieState extends State<Calorie> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   int _selectedIndex = 2;
-  List<TextEditingController> _controllers = [];
+  List<TextEditingController> _foodControllers = [];
+  List<TextEditingController> _weightControllers = [];
   List<String> _individualCalories = [];
   String _calories = '';
   final NutritionixService _nutritionixService = NutritionixService();
@@ -35,29 +34,44 @@ class _CalorieState extends State<Calorie> {
 
   void generateTxtFlds(int count) {
     setState(() {
-      _controllers = List.generate(count, (index) => TextEditingController());
+      _foodControllers =
+          List.generate(count, (index) => TextEditingController());
+      _weightControllers =
+          List.generate(count, (index) => TextEditingController());
       _individualCalories = List.generate(count, (index) => '');
-      if (_controllers.isNotEmpty) {
-        _controllers[0].text = 'example food';
-      }
     });
   }
 
   Future<void> _fetchCalories() async {
-    int totalCalories = 0;
-    for (int i = 0; i < _controllers.length; i++) {
-      final foodItem = _controllers[i].text;
-      if (foodItem.isNotEmpty) {
-        final calories = await _nutritionixService.getCalories(foodItem);
-        final calorieValue = calories != null ? calories : 0;
-        _individualCalories[i] = calorieValue.toString();
-        totalCalories += calorieValue.toInt(); // Cast to int
+    double totalCalories = 0.0; // Change to double
+    for (int i = 0; i < _foodControllers.length; i++) {
+      final foodItem = _foodControllers[i].text;
+      final weightText = _weightControllers[i].text;
+      if (foodItem.isNotEmpty && weightText.isNotEmpty) {
+        final double weight =
+            double.tryParse(weightText) ?? 0.0; // Change to double
+        if (weight > 0) {
+          final caloriesMap =
+              await _nutritionixService.getCaloriesAndServingSize(foodItem);
+          if (caloriesMap != null) {
+            final caloriePerGram =
+                _nutritionixService.calculateGramtoCalorie(caloriesMap);
+            final calorieValue =
+                caloriePerGram != null ? caloriePerGram * weight : 0.0;
+            _individualCalories[i] = calorieValue.toStringAsFixed(2);
+            totalCalories += calorieValue; // Use double for addition
+          } else {
+            _individualCalories[i] = '0';
+          }
+        } else {
+          _individualCalories[i] = '0';
+        }
       } else {
         _individualCalories[i] = '0';
       }
     }
     setState(() {
-      _calories = totalCalories.toString();
+      _calories = totalCalories.toStringAsFixed(2);
     });
   }
 
@@ -225,7 +239,7 @@ class _CalorieState extends State<Calorie> {
               elevation: 9,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Container(
+                child: SizedBox(
                   width: 500,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -263,7 +277,7 @@ class _CalorieState extends State<Calorie> {
                         height: 20,
                       ),
                       ...List.generate(
-                        _controllers.length,
+                        _foodControllers.length,
                         (index) {
                           return Padding(
                             padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -271,7 +285,7 @@ class _CalorieState extends State<Calorie> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 TextField(
-                                  controller: _controllers[index],
+                                  controller: _foodControllers[index],
                                   decoration: const InputDecoration(
                                     focusedBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.all(
@@ -280,6 +294,24 @@ class _CalorieState extends State<Calorie> {
                                           BorderSide(color: Colors.orange),
                                     ),
                                     labelText: 'Enter Meal',
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(20.0)),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                TextField(
+                                  controller: _weightControllers[index],
+                                  keyboardType: TextInputType.number,
+                                  decoration: const InputDecoration(
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(20.0)),
+                                      borderSide:
+                                          BorderSide(color: Colors.orange),
+                                    ),
+                                    labelText: 'Enter Weight (grams)',
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(20.0)),
@@ -312,11 +344,11 @@ class _CalorieState extends State<Calorie> {
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
                           'Total Calories: $_calories',
-                          style:
-                              TextStyle(fontSize: 20, color: Colors.blueAccent),
+                          style: const TextStyle(
+                              fontSize: 20, color: Colors.blueAccent),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       )
                     ],
