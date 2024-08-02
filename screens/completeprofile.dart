@@ -6,9 +6,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:my_app/screens/profilescreen.dart';
+import 'package:my_app/widgets/appbar.dart';
 
 class CompleteProfile extends StatefulWidget {
   const CompleteProfile({super.key});
@@ -88,32 +88,9 @@ class _CompleteProfileState extends State<CompleteProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(100),
-        child: AppBar(
-          iconTheme: const IconThemeData(color: Colors.white),
-          title: Text(
-            'FitHub',
-            style: GoogleFonts.agbalumo(
-              textStyle: const TextStyle(color: Colors.white, fontSize: 50),
-            ),
-          ),
-          backgroundColor: const Color.fromARGB(255, 73, 144, 201),
-          centerTitle: true,
-          flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Color.fromARGB(31, 1, 106, 242),
-                  Color.fromARGB(255, 17, 157, 22),
-                  Color.fromARGB(255, 255, 158, 31),
-                ],
-              ),
-            ),
-          ),
-        ),
+      appBar: const CustomAppBar(
+        title: 'Complete Profile',
+        autoback: false,
       ),
       body: SingleChildScrollView(
         child: Padding(

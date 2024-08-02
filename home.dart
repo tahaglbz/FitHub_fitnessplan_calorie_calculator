@@ -2,13 +2,13 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:my_app/auth/login.dart';
 import 'package:my_app/auth/signup.dart';
 import 'package:my_app/screens/completeprofile.dart';
 import 'package:my_app/screens/mainscreen.dart';
+import 'package:my_app/widgets/appbar.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -74,31 +74,10 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(100),
-        child: AppBar(
-          title: Text(
-            'FitHub',
-            style: GoogleFonts.agbalumo(
-              textStyle: const TextStyle(color: Colors.white, fontSize: 50),
-            ),
-          ),
-          backgroundColor: const Color.fromARGB(255, 73, 144, 201),
-          centerTitle: true,
-          flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Color.fromARGB(31, 1, 106, 242),
-                  Color.fromARGB(255, 17, 157, 22),
-                  Color.fromARGB(255, 255, 158, 31),
-                ],
-              ),
-            ),
-          ),
-        ),
+      appBar: const CustomAppBar(
+        title: 'FitHub',
+        autoback: false,
+        actions: [],
       ),
       body: Center(
         child: Column(

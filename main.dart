@@ -25,8 +25,8 @@ class MyApp extends StatelessWidget {
         appBarTheme: AppBarTheme(
           color: Colors.orange[800],
           elevation: 4,
-          iconTheme: IconThemeData(color: Colors.white),
-          titleTextStyle: TextStyle(color: Colors.white, fontSize: 20),
+          iconTheme: const IconThemeData(color: Colors.white),
+          titleTextStyle: const TextStyle(color: Colors.white, fontSize: 20),
         ),
         bottomNavigationBarTheme: BottomNavigationBarThemeData(
           backgroundColor: Colors.orange[100],
@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
           backgroundColor: Colors.orange[700],
           foregroundColor: Colors.white,
         ),
-        buttonTheme: ButtonThemeData(
+        buttonTheme: const ButtonThemeData(
           buttonColor: Colors.orange,
           textTheme: ButtonTextTheme.primary,
         ),
@@ -53,7 +53,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: HomePage(),
+      home: const HomePage(),
       debugShowCheckedModeBanner: false,
     );
   }

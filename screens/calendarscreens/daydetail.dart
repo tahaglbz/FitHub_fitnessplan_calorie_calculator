@@ -1,11 +1,12 @@
 // day_details_screen.dart
 
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:my_app/widgets/appbar.dart';
+import 'package:my_app/widgets/side_menu.dart';
 import 'reminder.dart'; // Add this import
 
 class DayDetailsScreen extends StatefulWidget {
@@ -19,6 +20,8 @@ class DayDetailsScreen extends StatefulWidget {
 
 class _DayDetailsScreenState extends State<DayDetailsScreen> {
   late User _currentUser;
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   void initState() {
@@ -181,38 +184,14 @@ class _DayDetailsScreenState extends State<DayDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(100),
-        child: AppBar(
-          automaticallyImplyLeading: true,
-          iconTheme: const IconThemeData(color: Colors.white),
-          title: Column(
-            children: [
-              Text(
-                '${widget.selectedDate.day}/${widget.selectedDate.month}/${widget.selectedDate.year}',
-                style: GoogleFonts.adventPro(
-                  textStyle: const TextStyle(color: Colors.white, fontSize: 50),
-                ),
-              ),
-            ],
-          ),
-          backgroundColor: const Color.fromARGB(255, 73, 144, 201),
-          centerTitle: true,
-          flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Color.fromARGB(31, 1, 106, 242),
-                  Color.fromARGB(255, 17, 157, 22),
-                  Color.fromARGB(255, 255, 158, 31),
-                ],
-              ),
-            ),
-          ),
-        ),
+      key: scaffoldKey,
+      appBar: CustomAppBar(
+        title:
+            '${widget.selectedDate.day}/${widget.selectedDate.month}/${widget.selectedDate.year}',
+        autoback: true,
+        scaffoldKey: scaffoldKey,
       ),
+      endDrawer: CustomSideMenu(auth: _auth),
       body: StreamBuilder<List<Reminder>>(
         stream: fetchReminders(_currentUser.uid, widget.selectedDate),
         builder: (context, snapshot) {
@@ -373,8 +352,8 @@ class _DayDetailsScreenState extends State<DayDetailsScreen> {
             },
           );
         },
-        child: const Icon(Icons.add, color: Colors.white),
         backgroundColor: Colors.red,
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
